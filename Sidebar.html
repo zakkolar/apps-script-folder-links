@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <!-- The CSS package above applies Google styling to buttons and other elements. -->
+
+    <style>
+    .branding-below {
+      bottom: 56px;
+      top: 0;
+    }
+    .branding-text {
+      left: 7px;
+      position: relative;
+      top: 3px;
+    }
+    .col-contain {
+      overflow: hidden;
+    }
+    .logo {
+      vertical-align: middle;
+    }
+    .radio-spacer {
+      height: 20px;
+    }
+    .width-100 {
+      width: 100%;
+    }
+    .form-group{
+    border-bottom-style:solid;
+    border-color:#777;
+    padding-bottom:10px;
+    border-width:1px;
+    }
+    
+    #loader{
+    width: 30px;
+    margin-bottom:-10px;
+    display: inline-block;
+    display:none;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar branding-below">
+      
+      <form id="main">
+        <div class="block form-group">
+          <label for="folder_id"><b>Folder ID</b></label>
+          <p>To get the folder ID, open the folder in Google Drive. In the URL for the folder, copy everything after folder/. Click the image below to see a bigger screenshot.</p>
+          <a href="https://drive.google.com/uc?export=view&id=1G6j2VM8Agpe590gCA2Au_nW89u2Htp3p"><img src="https://drive.google.com/uc?export=view&id=1G6j2VM8Agpe590gCA2Au_nW89u2Htp3p" alt="Select everything after /folder/ in the URL of your folder in Google Drive to get the ID" style="width: 500px; max-width: 100%; height: auto" title="Click for the larger version." /></a>
+          <input type="text" id="folder_id">
+        </div>
+        
+        <div class="block form-group">
+        <p><b>Link type</b></p>
+        <div>
+           <input type="radio" name="mode" id="normal" value="normal" checked>
+           <label for="normal">Normal, direct link</label>
+        </div>
+        <div>
+           <input type="radio" name="mode" id="copy" value="copy">
+           <label for="copy">*Force user to make a copy</label>
+        </div>
+        <div>
+           <input type="radio" name="mode" id="preview" value="preview">
+           <label for="preview">*Force user to make a copy, with a preview</label>
+        </div>
+         <p>*Force copy only works for Docs, Slides, Sheets, Forms, and Drawings. Other file types will still show up on your list, but the links will not force a copy.</p>
+     
+        </div>
+        
+       
+        <div class="block" id="button-bar">
+          <button class="blue" id="generate">Generate List</button> <div class="loader" id="loader">
+      <svg class="circular" viewBox="25 25 50 50">
+        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+      </svg>
+    </div>
+    
+        </div>
+      </form>
+    </div>
+
+    
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      /**
+       * On document load, assign click handlers to each button and try to load the
+       * user's origin and destination language preferences if previously set.
+       */
+       
+       var currentSheet;
+       
+      $(function() {
+       
+        $('#main').submit(function(e){
+          e.preventDefault();
+          $('#loader').show();
+          google.script.run
+          .withSuccessHandler(function(){
+          $('#loader').hide();
+          })
+            .withFailureHandler(
+              function(msg, element) {
+                showError(msg, $('#button-bar'));
+                $('#loader').hide();
+              })
+            .createList($('#folder_id').val(),$("input[name='mode']:checked").val());
+        });
+        
+        
+        
+      });
+ 
+
+
+
+      /**
+       * Inserts a div that contains an error message after a given element.
+       *
+       * @param {string} msg The error message to display.
+       * @param {DOMElement} element The element after which to display the error.
+       */
+      function showError(msg, element) {
+      $('#error').remove();
+        var div = $('<div id="error" class="error">' + msg + '</div>');
+        $(element).after(div);
+      }
+    </script>
+   <style>
+    .loader {
+  position: relative;
+  margin: 0 auto;
+  width: 100px;
+}
+.loader:before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
+.circular {
+  -webkit-animation: rotate 2s linear infinite;
+          animation: rotate 2s linear infinite;
+  height: 100%;
+  -webkit-transform-origin: center center;
+          transform-origin: center center;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+.path {
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  -webkit-animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+          animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+  stroke-linecap: round;
+}
+
+@-webkit-keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+
+@keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px;
+  }
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px;
+  }
+}
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px;
+  }
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px;
+  }
+}
+@-webkit-keyframes color {
+  100%,
+  0% {
+    stroke: #d62d20;
+  }
+  40% {
+    stroke: #0057e7;
+  }
+  66% {
+    stroke: #008744;
+  }
+  80%,
+  90% {
+    stroke: #ffa700;
+  }
+}
+@keyframes color {
+  100%,
+  0% {
+    stroke: #d62d20;
+  }
+  40% {
+    stroke: #0057e7;
+  }
+  66% {
+    stroke: #008744;
+  }
+  80%,
+  90% {
+    stroke: #ffa700;
+  }
+}
+body {
+  background-color: #eee;
+}
+
+
+</style>
+  </body>
+</html>
